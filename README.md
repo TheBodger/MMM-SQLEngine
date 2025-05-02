@@ -27,6 +27,10 @@ To install the module, use your terminal to:
 
 ## Using the module
 
+### Input feeds
+
+The input feed(s) for this engine must be provided in json and follow the definition of the NDTF format (simply an array of data, with each set containing a subject, object, value amd timestamp). Details can be found here.
+
 ### MagicMirror² Configuration
 
 To use this module, add the following minimum configuration block to the modules array in the `config/config.js` file:
@@ -37,13 +41,12 @@ To use this module, add the following minimum configuration block to the modules
   datafeeds: [
     {
       dataseturl: "unique id of the incoming data set, either the providing module ID in format of id:///moduleid or a file reference url, in the format file:///filename with any required paths, will always refer to the root of this module",
-      subject: "key name in the input to be used as the subject value, default is subject",
-      object: "key name denoting the object(ive) of this data set, default is object",
-      value: "key name in the input to be used as the actual value, default is value",
-      timestamp: "key name in the input to be used as a timestamp value, default is timestamp", 
+       
     },
+  ],
+  
+
     
-  ]
 }
 ```
 
@@ -61,11 +64,16 @@ To use this module, add the following minimum configuration block to the modules
 | `object`            |*Optional* - The key name of the object field.<br><br> **Possible values:** A name that matches the incoming JSON feed object key. <br> **Default value:** object
 | `value`            |*Optional* - The key name of the value field.<br><br> **Possible values:** A name that matches the incoming JSON feed value key. <br> **Default value:** value
 | `timestamp`            |*Optional* - The key name of the Timestamp field.<br><br> **Possible values:** A name that matches the incoming JSON feed timestamp key <br> **Default value:** timestamp
-| `filename`            |*Optional* - The filename, with path, where the output feed will be written in a JSON format<br><br> **Possible values:** Any valid filename and path string <br> **Default value:** none
+| `DBaction`            |*Optional* - Action to take with the data from feed and the DB it will be stored in.<br><br> **Possible values:** create or update<br> **Default value:** create
+|`End data feed format`|
+| `sql: `        | *Required* - the SQL query to run after all feeds have been processed that must produce an output dataset in the order of subject,object,value and timestamp, but using any name for each field.<br><br> **Possible values:** Any valid SQL combining multiple DB tables that have been loaded as part of this instance <br> **Default value:** None
+| `dataoutput_NDTF: `        | *Optional* - if the NFTF format feed should be published<br><br> **Possible values:** True,False <br> **Default value:** True
+| `dataoutput_RSS: `        | *Optional* - if the RSS format feed should be published<br><br> **Possible values:** True,False <br> **Default value:** False
+| `filename`            |*Optional* - The filename, with path, where the output NDTF feed will be written regardless if the feed is published<br><br> **Possible values:** Any valid filename and path string <br> **Default value:** none
 
 ### Example configuration
 
-this configuration produces two feeds from the input JSON feed, 
+this configuration produces a single NDTF feeds from an input feed from a module and a local file , 
 
 ```
 {
