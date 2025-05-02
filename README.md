@@ -5,7 +5,7 @@ This magic mirror module is an MMM-xxxProvider module that is part of the MMM-Ch
 
 For an overview of these modules see the README.md in https://github.com/TheBodger/MMM-ChartDisplay.
 
-MMM-SQLEngine module accepts JSON (NDTF Simple) formatted data, from another Module or local text file and stores it into SQL Lite DB files. These can then be used as input to a SQL query, the output is presented as a feed, either simple NDTF json or My RSS feed format. this data can be consumed by any other compatibel modules.
+MMM-SQLEngine module accepts JSON (NDTF Simple) formatted data, from another Module or local text file and stores it into SQL Lite DB files. These can then be used as input to a SQL query, the output is presented as a feed, either simple NDTF json or My RSS feed format. This data can be consumed by any other compatible modules (display or further providers.
 
 ### Example
 ![Example of MMM-ChartProvider-JSON output being displayed](images/screenshot.png?raw=true "Example screenshot")
@@ -21,7 +21,7 @@ Before installing this module;
 ## Installation
 To install the module, use your terminal to:
 1. Navigate to your MagicMirror's modules folder. If you are using the default installation directory, use the command:<br />`cd ~/MagicMirror/modules`
-2. Clone the module:<br />`MMM-SQLEngine`
+2. Clone the module:<br />`git clone https://github.com/TheBodger/MMM-SQLEngine`
 3. NAvigate to the Module directory: <br />`cd MMM-SQLEngine`
 4. `npm install` - to install SQLlite
 
@@ -34,10 +34,9 @@ To use this module, add the following minimum configuration block to the modules
 {
   consumerids:['consumerid of MMM-ChartDisplay],
   id:'unique id of this module instance',
-  input: "file name or URL of JSON feed",
-  jsonfeeds: [
+  datafeeds: [
     {
-      setid: "unique setid of this data set",
+      datasetid: "unique id of the incoming data set, either the providing module ID or",
       subject: "key name in the input to be used as the subject value",
       object: "string denoting the object(ive) of this data set",
       value: "key name in the input to be used as the actual value",  
