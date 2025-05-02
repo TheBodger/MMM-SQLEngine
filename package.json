@@ -1,0 +1,28 @@
+{
+  "name": "MMM-SQLEngine",
+  "version": "1.0.0",
+  "description": "Process data feeds using SQLite and output for consumption by MMM Consumers",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheBodger/MMM-SQLEngine"
+  },
+  "author": {
+    "name": "N Scott"
+  },
+  "keywords": [
+    "magic mirror",
+    "smart mirror",
+    "PRocessing Module",
+    "SQLite",
+    "RSS Data",
+    "JSON Data"
+  ],
+  "dependencies": {
+
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TheBodger/MMM-SQLEngine/issues"
+  },
+  "homepage": "https://github.com/TheBodger/MMM-SQLEngine#readme"
+}
