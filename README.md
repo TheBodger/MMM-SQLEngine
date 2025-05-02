@@ -21,7 +21,9 @@ Before installing this module;
 ## Installation
 To install the module, use your terminal to:
 1. Navigate to your MagicMirror's modules folder. If you are using the default installation directory, use the command:<br />`cd ~/MagicMirror/modules`
-2. Clone the module:<br />`git clone https://github.com/TheBodger/MMM-ChartProvider-JSON`
+2. Clone the module:<br />`MMM-SQLEngine`
+3. NAvigate to the Module directory: <br />`cd MMM-SQLEngine`
+4. `npm install` - to install SQLlite
 
 ## Using the module
 
