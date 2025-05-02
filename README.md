@@ -29,24 +29,43 @@ To install the module, use your terminal to:
 
 ### Input feeds
 
-The input feed(s) for this engine must be provided in json and follow the definition of the NDTF format (simply an array of data, with each set containing a subject, object, value amd timestamp). Details can be found [here](https://github.com/TheBodger/MMM-ChartUtilities#ndtf---neils-or-normalised-data-transfer-format).
+The input feed(s) for this module must be provided in json and follow the definition of the NDTF format (simply a json array of data, with each set containing a subject, object, value and timestamp). Details can be found [here](https://github.com/TheBodger/MMM-ChartUtilities#ndtf---neils-or-normalised-data-transfer-format). The feed can contain one or more sets of data. 
+File format feeds are best for data that changes very rarely, such as historical reference data. It is alse good for debugging other modules, ensuring that the input data is always fixed. File feed are read in when the module first runs and is **not refreshed**. 
+An input feed from another module running in the current instance of MM will be processed whenever it is published and the listening SQLEngine recognises that the data is ment for this instance. 
+Once the data has been read, it will be stored in a file based SQLite DB based on the configuration paramater DBAction. If the DB doesnt exist, or the DBs have been cleared at the start of the run, or the DBaction is **create**, the DB will be (re)created and the feed data inserted.
+if the DB exists and the DBaction is update, then the value is updated based on matching the 3 fields subject,object and timestamp. Any sets of data not already in the DB will be added. __Note__ Data will never be deleted from a table.
+
+### Output feed(s)
+
+Once the feeds have been processed, the SQL is run and the output, which must only be 4 columns in the order of subject, object, timestamp and value, (if no new names are provided in the SQL) will be published based on the dataoutput_ paramaters. There can be 0,1 or2 feed outputs. The JSON format feed is compatible with other modules that expect the input in the NDTF simple format. The RSS feed format is defined in the Feed utilities and is a subset of the ATOM standards 1 and 2. This can be used by modules that expect the published feed in this format. 
+
+#### RSS output feed
+
+The RSS feed converts the output from the SQL into the following format to mirror the type of data found in a RSS feed as defined in the RSS item class [here](https://github.com/TheBodger/MMM-FeedUtilities/blob/master/RSS.js).
+
+```
+	id = this module id_row count from SQL
+	title = subject, object @ timestamp
+	description = value
+	pubdate = data/time feed published
+	age = 0
+	imageURL = null
+	source = this module id
+```
 
 ### MagicMirror² Configuration
 
 To use this module, add the following minimum configuration block to the modules array in the `config/config.js` file:
 ```js
 {
-  consumerids:['consumerid of MMM-SQLEngine feed],
+  consumerids:['consumerid of MMM-SQLEngine feed'],
   id:'unique id of this module instance',
   datafeeds: [
     {
-      dataseturl: "unique id of the incoming data set, either the providing module ID in format of id:///moduleid or a file reference url, in the format file:///filename with any required paths, will always refer to the root of this module",
-       
+      dataseturl: "unique id of the incoming data set, either the providing module ID in format of id:///moduleid or a file reference url, in the format file:///filename with any required paths, will always refer to the root of this module",  
     },
   ],
-  
-
-    
+  sql: "Select * from 'unique id of this module instance_1'
 }
 ```
 
@@ -57,8 +76,10 @@ To use this module, add the following minimum configuration block to the modules
 | `text`                	| *Optional* - <br><br> **Possible values:** Any string.<br> **Default value:** The Module name
 | `consumerids`            | *Required* - a list of 1 or more consumer modules this module will provide for.<br><br> **Possible values:** An array of strings exactly matching the ID of one or more MMM-ChartDisplay modules <br> **Default value:** none
 | `id`         | *Required* - The unique ID of this provider module<br><br> **Possible values:** any unique string<br> **Default value:** none
+| `DBclear`| *Optional* - Determines if all saved DBs linked to this Module ID should be deleted befor any feeds are processed<br><br> **Possible values:** True,False <br> **Default value:** True
 | `datafeeds`        | *Required* - An array of one or more data feed definitions, see below for the datafeed configuration options 
 | `dataFeed Format`            |
+| `datasetid`|*Optional* -  Id of the dataset used in the SQL<br><br> **Possible values:** Any unique string. <br> **Default value:** id_n, where n = datafeed instance, i.e. first datafeed is 1, second is 2 etc
 | `dataseturl`            |*Required* -  Id of the feed<br><br> **Possible values:** Any unique string in format type:///location, where type is either id or file and location is the id of the providing module OR a filename and path relative to this modules path. <br> **Default value:** none
 | `subject`            |*Optional* - The key name of the subject field.<br><br> **Possible values:** A name that matches the incoming JSON feed subject key. <br> **Default value:** subject
 | `object`            |*Optional* - The key name of the object field.<br><br> **Possible values:** A name that matches the incoming JSON feed object key. <br> **Default value:** object
