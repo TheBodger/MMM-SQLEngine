@@ -29,7 +29,7 @@ To install the module, use your terminal to:
 
 ### Input feeds
 
-The input feed(s) for this engine must be provided in json and follow the definition of the NDTF format (simply an array of data, with each set containing a subject, object, value amd timestamp). Details can be found here.
+The input feed(s) for this engine must be provided in json and follow the definition of the NDTF format (simply an array of data, with each set containing a subject, object, value amd timestamp). Details can be found [here](https://github.com/TheBodger/MMM-ChartUtilities#ndtf---neils-or-normalised-data-transfer-format).
 
 ### MagicMirror² Configuration
 
