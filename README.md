@@ -22,8 +22,8 @@ Before installing this module;
 To install the module, use your terminal to:
 1. Navigate to your MagicMirror's modules folder. If you are using the default installation directory, use the command:<br />`cd ~/MagicMirror/modules`
 2. Clone the module:<br />`git clone https://github.com/TheBodger/MMM-SQLEngine`
-3. NAvigate to the Module directory: <br />`cd MMM-SQLEngine`
-4. `npm install` - to install SQLlite
+3. Navigate to the Module directory: <br />`cd MMM-SQLEngine`
+4. `npm install` - to install SQLlite and other required modules
 
 ## Using the module
 
@@ -32,14 +32,15 @@ To install the module, use your terminal to:
 To use this module, add the following minimum configuration block to the modules array in the `config/config.js` file:
 ```js
 {
-  consumerids:['consumerid of MMM-ChartDisplay],
+  consumerids:['consumerid of MMM-SQLEngine feed],
   id:'unique id of this module instance',
   datafeeds: [
     {
-      datasetid: "unique id of the incoming data set, either the providing module ID or",
-      subject: "key name in the input to be used as the subject value",
-      object: "string denoting the object(ive) of this data set",
-      value: "key name in the input to be used as the actual value",  
+      dataseturl: "unique id of the incoming data set, either the providing module ID in format of id:///moduleid or a file reference url, in the format file:///filename with any required paths, will always refer to the root of this module",
+      subject: "key name in the input to be used as the subject value, default is subject",
+      object: "key name denoting the object(ive) of this data set, default is object",
+      value: "key name in the input to be used as the actual value, default is value",
+      timestamp: "key name in the input to be used as a timestamp value, default is timestamp", 
     },
     
   ]
