@@ -58,22 +58,6 @@ The RSS feed converts the output from the SQL into the following format to mirro
 To use this module, add the following minimum configuration block to the modules array in the `config/config.js` file:
 ```js
 
- {
-		id: "MMCP3",
-		consumerids: ["MMCD3"],
-		datarefreshinterval: 1000 * 60 * 60 * 24,
-		input: 'feedprovider',
-		wordfeeds: [
-			{
-				feedname: "twords",
-				setid: "TJXWords",
-				type: "numeric",
-			}
-		]
-	}
-},
-
-
 {
 module: "MMM-SQLEngine",
 config:
@@ -82,7 +66,7 @@ config:
   	id:'unique id of this module instance',
   	datafeeds: [
     		{
-      		dataseturl: "unique id of the incoming data set, either the providing module ID in format of id:///moduleid or a file reference url, in the format file:///filename with any required paths, will always refer to the root of this module",  
+      		dataseturl: "unique id of the incoming data set, either the providing module ID in format of id://moduleid or a file reference url, in the format file://filename with any required paths, which will always refer to the root of this module",  
     		},
   		],
   	sql: "Select * from 'unique id of this module instance_1'
