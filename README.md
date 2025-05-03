@@ -7,8 +7,14 @@ For an overview of these modules see the README.md in https://github.com/TheBodg
 
 MMM-SQLEngine module accepts JSON (NDTF Simple) formatted data, from another Module or local text file and stores it into SQL Lite DB files. These can then be used as input to a SQL query, the output is presented as a feed, either simple NDTF json or My RSS feed format. This data can be consumed by any other compatible modules (display or further providers.
 
+### Warning
+
+SQLite support in NODEjs is experimental and made available from version 22.5.0. so magic mirror needs to be started with the --experimental-sqlite flag. 
+
 ### Example
 ![Example of MMM-ChartProvider-JSON output being displayed](images/screenshot.png?raw=true "Example screenshot")
+
+
 
 ### Dependencies
 
@@ -22,9 +28,7 @@ Before installing this module;
 To install the module, use your terminal to:
 1. Navigate to your MagicMirror's modules folder. If you are using the default installation directory, use the command:<br />`cd ~/MagicMirror/modules`
 2. Clone the module:<br />`git clone https://github.com/TheBodger/MMM-SQLEngine`
-3. This will also create a subfolder of DB that will contain all the file based DBs used by SQLlite
-4. Navigate to the Module directory: <br />`cd MMM-SQLEngine`
-5. `npm install` - to install SQLlite and other required modules
+3. This will also create a subfolder of DB that will contain any file based DBs used by SQLlite.
 
 ## Using the module
 
