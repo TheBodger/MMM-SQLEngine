@@ -85,17 +85,20 @@ config:
 | `DBclear`| *Optional* - Determines if all saved DBs linked to this Module ID should be deleted befor any feeds are processed<br><br> **Possible values:** True,False <br> **Default value:** True
 | `datafeeds`        | *Required* - An array of one or more data feed definitions, see below for the datafeed configuration options 
 | `dataFeed Format`            |
-| `datasetid`|*Optional* -  Id of the dataset used in the SQL<br><br> **Possible values:** Any unique string. <br> **Default value:** id_n, where n = datafeed instance, i.e. first datafeed is 1, second is 2 etc
-| `dataseturl`            |*Required* -  Id of the feed<br><br> **Possible values:** Any unique string in format type:///location, where type is either id or file and location is the id of the providing module OR a filename and path relative to this modules path. <br> **Default value:** none
-| `subject`            |*Optional* - The key name of the subject field.<br><br> **Possible values:** A name that matches the incoming JSON feed subject key. <br> **Default value:** subject
-| `object`            |*Optional* - The key name of the object field.<br><br> **Possible values:** A name that matches the incoming JSON feed object key. <br> **Default value:** object
-| `value`            |*Optional* - The key name of the value field.<br><br> **Possible values:** A name that matches the incoming JSON feed value key. <br> **Default value:** value
-| `timestamp`            |*Optional* - The key name of the Timestamp field.<br><br> **Possible values:** A name that matches the incoming JSON feed timestamp key <br> **Default value:** timestamp
-| `DBaction`            |*Optional* - Action to take with the data from feed and the DB it will be stored in.<br><br> **Possible values:** create or update<br> **Default value:** create
-|`End data feed format`|
-| `sql: `        | *Required* - the SQL query to run after all feeds have been processed that must produce an output dataset in the order of subject,object,value and timestamp, but using any name for each field.<br><br> **Possible values:** Any valid SQL combining multiple DB tables that have been loaded as part of this instance <br> **Default value:** None
-| `dataoutput_NDTF: `        | *Optional* - if the NFTF format feed should be published<br><br> **Possible values:** True,False <br> **Default value:** True
-| `dataoutput_RSS: `        | *Optional* - if the RSS format feed should be published<br><br> **Possible values:** True,False <br> **Default value:** False
+|  `datasetid`|*Optional* -  Id of the dataset used in the SQL<br><br> **Possible values:** Any unique string. <br> **Default value:** id_n, where n = datafeed instance, i.e. first datafeed is 1, second is 2 etc
+|  `dataseturl`            |*Required* -  Id of the feed<br><br> **Possible values:** Any unique string in format type:///location, where type is either id or file and location is the id of the providing module OR a filename and path relative to this modules path. <br> **Default value:** none
+|  `subject`            |*Optional* - The key name of the subject field.<br><br> **Possible values:** A name that matches the incoming JSON feed subject key. <br> **Default value:** subject
+|  `object`            |*Optional* - The key name of the object field.<br><br> **Possible values:** A name that matches the incoming JSON feed object key. <br> **Default value:** object
+|  `value`            |*Optional* - The key name of the value field.<br><br> **Possible values:** A name that matches the incoming JSON feed value key. <br> **Default value:** value
+|  `timestamp`            |*Optional* - The key name of the Timestamp field.<br><br> **Possible values:** A name that matches the incoming JSON feed timestamp key <br> **Default value:** timestamp
+|  `DBaction`            |*Optional* - Action to take with the data from feed and the DB it will be stored in.<br><br> **Possible values:** create or update<br> **Default value:** create
+| `End data feed format`|
+| `SQL settings`|
+|  `sql: `        | *Required* - the SQL query to run after all feeds have been processed that must produce an output dataset in the order of subject,object,value and timestamp, but using any name for each field.<br><br> **Possible values:** Any valid SQL combining multiple DB tables that have been loaded as part of this instance <br> **Default value:** None
+|  `usememory`        | *Optional* - if the SQL should be run in memory or on the file based DB<br><br> **Possible values:** True,False <br> **Default value:** True
+| `End SQL settings `|
+| `dataoutput_NDTF `        | *Optional* - if the NFTF format feed should be published<br><br> **Possible values:** True,False <br> **Default value:** True
+| `dataoutput_RSS `        | *Optional* - if the RSS format feed should be published<br><br> **Possible values:** True,False <br> **Default value:** False
 | `filename`            |*Optional* - The filename, with path, where the output NDTF feed will be written regardless if the feed is published<br><br> **Possible values:** Any valid filename and path string <br> **Default value:** none
 
 ### Example configuration
