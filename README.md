@@ -45,7 +45,7 @@ Once the feeds have been processed, the SQL is run and the output, which must on
 The RSS feed converts the output from the SQL into the following format to mirror the type of data found in a RSS feed as defined in the RSS item class [here](https://github.com/TheBodger/MMM-FeedUtilities/blob/master/RSS.js).
 
 ```
-	id = this module id_row count from SQL
+	id = this module id_row count from SQL query returned data set (internal count, not required in actual SQL query)
 	title = subject, object @ timestamp
 	description = value
 	pubdate = data/time feed published
@@ -97,7 +97,7 @@ config:
 |  `sql: `        | *Required* - the SQL query to run after all feeds have been processed that must produce an output dataset in the order of subject,object,value and timestamp, but using any name for each field.<br><br> **Possible values:** Any valid SQL combining multiple DB tables that have been loaded as part of this instance <br> **Default value:** None
 |  `usememory`        | *Optional* - if the SQL should be run in memory or on the file based DB<br><br> **Possible values:** True,False <br> **Default value:** True
 | `End SQL settings `|
-| `dataoutput_NDTF `        | *Optional* - if the NFTF format feed should be published<br><br> **Possible values:** True,False <br> **Default value:** True
+| `dataoutput_NDTF `        | *Optional* - if the NDTF format feed should be published<br><br> **Possible values:** True,False <br> **Default value:** True
 | `dataoutput_RSS `        | *Optional* - if the RSS format feed should be published<br><br> **Possible values:** True,False <br> **Default value:** False
 | `filename`            |*Optional* - The filename, with path, where the output NDTF feed will be written regardless if the feed is published<br><br> **Possible values:** Any valid filename and path string <br> **Default value:** none
 
