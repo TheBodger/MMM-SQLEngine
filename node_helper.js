@@ -18,6 +18,8 @@ const NodeHelper = require("node_helper");
 const Configurations = require("../MMM-Provider-Consumer-utils/configurations.js");
 const PayloadTracker = require("../MMM-Provider-Consumer-utils/payload_tracker.js");
 const Payload = require("../MMM-Provider-Consumer-utils/payload.js");
+const Utilities = require("../MMM-Provider-Consumer-utils/utilities.js");
+const RSS = require("../MMM-FeedUtilities/RSS.js");
 
 //local requirements from here
 
@@ -164,7 +166,7 @@ module.exports = NodeHelper.create({
 			console.log("Query result for module instance " + moduleinstance + ", rows returned:" + res.length);
 		}
 
-		return [query.all()];
+		return query.all();
 	},
 
 	process: function (moduleinstance,payload) {
@@ -191,9 +193,17 @@ module.exports = NodeHelper.create({
 		// or a simple NDTF payload
 
 		if (payload.PayloadType == "NDTF") {
+			//add the N DTF payload
+
 			this.processNDTF(moduleinstance, payload); //prepare the data first
 			//overlay the sql result into the outgoing payload
-			self.payloads[moduleinstance].Payload = this.getQueryResult(moduleinstance);
+			self.payloads[moduleinstance].Payload = self.payloads[moduleinstance].addPayload(payload.PayloadType);
+
+			//add back key info
+			self.payloads[moduleinstance].Payload.JSONsource = payload.Payload.JSONsource;
+			self.payloads[moduleinstance].Payload.timestamp = payload.Payload.timestamp;
+
+			self.payloads[moduleinstance].Payload.NDTF = this.getQueryResult(moduleinstance);
 			}
 		
 		/*
@@ -204,6 +214,28 @@ module.exports = NodeHelper.create({
 
 
 		*/
+
+		if (this.configurations.configuration[moduleinstance].outputType == "RSS" && payload.PayloadType == "NDTF")
+		{
+			//add RSS payload
+
+			var NDTFpayload = self.payloads[moduleinstance].Payload.clone();
+
+			self.payloads[moduleinstance].Payload = new Payload.RSSPayload();
+
+			self.payloads[moduleinstance].Payload.timestamp = NDTFpayload.timestamp;
+			self.payloads[moduleinstance].Payload.RSSFeedSource = new RSS.RSSsource();
+			self.payloads[moduleinstance].Payload.RSSFeedSource.title =	NDTFpayload.JSONsource; 
+			self.payloads[moduleinstance].Payload.Items = []; 
+			self.payloads[moduleinstance].Payload.ItemsSent = NDTFpayload.ItemsSent;
+
+			for (var itemIdx = 0; itemIdx < NDTFpayload.ItemsSent.length; itemIdx++) {
+				self.payloads[moduleinstance].Payload.RSS.ItemsSent[itemIdx] = false;
+			}
+
+			self.payloads[moduleinstance].Payload = Utilities.NDTF2RSS(NDTFpayload.NDTF, NDTFpayload.JSONsource);
+			self.payloads[moduleinstance].PayloadType = "RSS";
+		}
 
 		this.sendUpdate("NEW_DATA", self.payloads[moduleinstance]);
 	},

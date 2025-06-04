@@ -5,6 +5,13 @@ Module.register("MMM-SQLEngine", {
 		id: "MMSE1",
 		payloadType: "RSS", //options RSS or NDTF
 		showDOM: false, // show the data created in the on the MM display, location must be added into the module config if true otherwise MM will error out
+
+		sqlParams: {
+			sqlQuery: "Select * from Data",
+		},
+
+		outputType: "RSS", //options RSS or NDTF, this is the type of data we will output to the consumer
+
 	},
 
 	/**
