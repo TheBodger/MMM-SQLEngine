@@ -23,7 +23,7 @@ Module.register("MMM-SQLEngine", {
 
 	getScripts: function () {
 		return [
-			this.file('../MMM-Provider-Consumer-utils/payload.js'), // this file will be loaded straight from the module folder.
+			this.file('../MMM-structures/MMM-structures.js'), // this file will be loaded straight from the module folder.
 		]
 	},
 

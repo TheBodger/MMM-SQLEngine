@@ -15,11 +15,9 @@
 
 const NodeHelper = require("node_helper");
 
-const Configurations = require("../MMM-Provider-Consumer-utils/configurations.js");
-const PayloadTracker = require("../MMM-Provider-Consumer-utils/payload_tracker.js");
-const Payload = require("../MMM-Provider-Consumer-utils/payload.js");
-const Utilities = require("../MMM-Provider-Consumer-utils/utilities.js");
-const RSS = require("../MMM-FeedUtilities/RSS.js");
+const Utilities = require("../MMM-Utilities/MMM-utilities.js");
+
+const Structures = require("../MMM-structures/MMM-structures.js");
 
 //local requirements from here
 
@@ -30,8 +28,8 @@ const { DatabaseSync } = require('node:sqlite');
 module.exports = NodeHelper.create({
 
   start: function () {
-		this.configurations = new Configurations();
-		this.payloadTracker = new PayloadTracker();
+		this.configurations = new Structures.Configurations();
+		this.payloadTracker = new Structures.PayloadTracker();
 		this.debug = false;
 		this.payloads = [];
 		this.database = []; //will hold the database for each module instance
@@ -54,7 +52,7 @@ module.exports = NodeHelper.create({
 
 		//as we dont know what type of data we are getting yet, the payload is left empty using a NULL payload type
 
-		this.payloads[moduleinstance] = new Payload.NodePayload(null, moduleinstance, config.id);
+		this.payloads[moduleinstance] = new Structures.NodePayload(null, moduleinstance, config.id);
 
 		this.setupDB(moduleinstance); //do this anyway regardless of config data type
 
@@ -221,10 +219,10 @@ module.exports = NodeHelper.create({
 
 			var NDTFpayload = self.payloads[moduleinstance].Payload.clone();
 
-			self.payloads[moduleinstance].Payload = new Payload.RSSPayload();
+			self.payloads[moduleinstance].Payload = new Structures.RSSPayload();
 
 			self.payloads[moduleinstance].Payload.timestamp = NDTFpayload.timestamp;
-			self.payloads[moduleinstance].Payload.RSSFeedSource = new RSS.RSSsource();
+			self.payloads[moduleinstance].Payload.RSSFeedSource = new Structures.RSSSource();
 			self.payloads[moduleinstance].Payload.RSSFeedSource.title =	NDTFpayload.JSONsource; 
 			self.payloads[moduleinstance].Payload.Items = []; 
 			self.payloads[moduleinstance].Payload.ItemsSent = NDTFpayload.ItemsSent;
