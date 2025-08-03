@@ -11,6 +11,7 @@ Module.register("MMM-SQLEngine", {
 		},
 
 		outputType: "RSS", //options RSS or NDTF, this is the type of data we will output to the consumer
+		RSSTitle: "", //the title to use when RSS output is used
 
 	},
 
@@ -23,7 +24,7 @@ Module.register("MMM-SQLEngine", {
 
 	getScripts: function () {
 		return [
-			this.file('../MMM-structures/MMM-structures.js'), // this file will be loaded straight from the module folder.
+			this.file('../MMM-Structures/MMM-Structures.js'), // this file will be loaded straight from the module folder.
 		]
 	},
 

@@ -15,15 +15,12 @@
 
 const NodeHelper = require("node_helper");
 
-const Utilities = require("../MMM-Utilities/MMM-utilities.js");
-
-const Structures = require("../MMM-structures/MMM-structures.js");
+const Utilities = require("../MMM-Utilities/MMM-Utilities.js");
+const Structures = require("../MMM-Structures/MMM-Structures.js");
 
 //local requirements from here
 
 const { DatabaseSync } = require('node:sqlite');
-
-//
 
 module.exports = NodeHelper.create({
 
@@ -48,7 +45,7 @@ module.exports = NodeHelper.create({
 
 		this.configurations.addConfiguration(moduleinstance, config);
 
-		this.payloadTracker.addTracker(moduleinstance, config);
+		this.payloadTracker.addTracker(moduleinstance);
 
 		//as we dont know what type of data we are getting yet, the payload is left empty using a NULL payload type
 
@@ -128,7 +125,7 @@ module.exports = NodeHelper.create({
 
 	processNDTF(moduleinstance, payload) {
 
-		//as we are adding the data each time as we are only getting changed data, we can generally insert - however, we should fetermine if an update is required, possibly using
+		//as we are adding the data each time as we are only getting changed data, we can generally insert - however, we should determine if an update is required, possibly using
 		//the timestamp of the data we receive
 
 		const insert = this.database[moduleinstance].prepare('INSERT INTO data (subject,object,timestamp,value) VALUES (?, ?, ?, ?)');
@@ -138,7 +135,7 @@ module.exports = NodeHelper.create({
 		payload.Payload.NDTF.forEach(function (item) 
 		{
 
-			//validate that the fiels are ok
+			//validate that the fields are ok
 			//timestamp must be an integer, so convert it if needed
 			if (typeof item.timestamp == 'string') {
 				item.timestamp = new Date(item.timestamp).getTime(); // convert to Unix timestamp
@@ -191,7 +188,7 @@ module.exports = NodeHelper.create({
 		// or a simple NDTF payload
 
 		if (payload.PayloadType == "NDTF") {
-			//add the N DTF payload
+			//add the NDTF payload
 
 			this.processNDTF(moduleinstance, payload); //prepare the data first
 			//overlay the sql result into the outgoing payload
@@ -201,20 +198,27 @@ module.exports = NodeHelper.create({
 			self.payloads[moduleinstance].Payload.JSONsource = payload.Payload.JSONsource;
 			self.payloads[moduleinstance].Payload.timestamp = payload.Payload.timestamp;
 
-			self.payloads[moduleinstance].Payload.NDTF = this.getQueryResult(moduleinstance);
-			}
-		
-		/*
+			//only add the NDTF data if it is not already there
+			//have to look through every row returned to add a key to track
 
+			var NDTFItems = this.getQueryResult(moduleinstance);
+			var NDTFItem = new Structures.NDTFItem();
 
-		add all the processing required to agreatege etc the incoming data that will continue to be sent from the provider
+			NDTFItems.forEach(function (item) {
 
+				var key = NDTFItem.gethashCode(item.subject + item.object + item.timestamp); //can include value if really needed
 
+				if (!self.payloadTracker.addItem(moduleinstance, key)) {
 
-		*/
+					self.payloads[moduleinstance].Payload.NDTF.push(item);
+				}
+			})
+		}
 
-		if (this.configurations.configuration[moduleinstance].outputType == "RSS" && payload.PayloadType == "NDTF")
-		{
+		//want to send the data out as a RSS format Payload.
+		//overwrites the NDTF payload from above with RSS items only for NDTF items not alrady sent
+
+		if (this.configurations.configuration[moduleinstance].outputType == "RSS" && payload.PayloadType == "NDTF") {
 			//add RSS payload
 
 			var NDTFpayload = self.payloads[moduleinstance].Payload.clone();
@@ -223,19 +227,39 @@ module.exports = NodeHelper.create({
 
 			self.payloads[moduleinstance].Payload.timestamp = NDTFpayload.timestamp;
 			self.payloads[moduleinstance].Payload.RSSFeedSource = new Structures.RSSSource();
-			self.payloads[moduleinstance].Payload.RSSFeedSource.title =	NDTFpayload.JSONsource; 
-			self.payloads[moduleinstance].Payload.Items = []; 
+			self.payloads[moduleinstance].Payload.RSSFeedSource.title = NDTFpayload.JSONsource;
+			self.payloads[moduleinstance].Payload.Items = [];
 			self.payloads[moduleinstance].Payload.ItemsSent = NDTFpayload.ItemsSent;
 
-			for (var itemIdx = 0; itemIdx < NDTFpayload.ItemsSent.length; itemIdx++) {
-				self.payloads[moduleinstance].Payload.RSS.ItemsSent[itemIdx] = false;
-			}
+			// create temp NDTF payload only containing items not already sent
 
-			self.payloads[moduleinstance].Payload = Utilities.NDTF2RSS(NDTFpayload.NDTF, NDTFpayload.JSONsource);
+			var tempNDTF = [];
+			var NDTFItem = new Structures.NDTFItem();
+
+			NDTFpayload.NDTF.forEach(function (item) {
+
+				var key = NDTFItem.gethashCode(item.subject + item.object + item.timestamp); //can include value if really needed
+
+				if (!self.payloadTracker.getItem(moduleinstance, key)) {
+					tempNDTF.push(item);
+					self.payloadTracker.sentItem(moduleinstance, key);
+				}
+			});
+
+			self.payloads[moduleinstance].Payload = Utilities.NDTF2RSS(this.configurations.configuration[moduleinstance].RSSTitle, tempNDTF, NDTFpayload.JSONsource);
 			self.payloads[moduleinstance].PayloadType = "RSS";
 		}
+		else //set the keys for the basic NDTF output
+		{
+			this.payloadTracker.getItems(moduleinstance).forEach(function (item) {
+				this.payloadTracker.sentItem(moduleinstance, item);
+			})
 
-		this.sendUpdate("NEW_DATA", self.payloads[moduleinstance]);
+		}
+
+		if ((self.payloads[moduleinstance].Payload.Items && self.payloads[moduleinstance].Payload.Items.length > 0) || (self.payloads[moduleinstance].Payload.NDTF && self.payloads[moduleinstance].Payload.NDTF.length > 0)) {
+			this.sendUpdate("NEW_DATA", self.payloads[moduleinstance]);
+		}
 	},
 
 });
