@@ -7,6 +7,9 @@ Module.register("MMM-SQLEngine", {
 		showDOM: false, // show the data created in the on the MM display, location must be added into the module config if true otherwise MM will error out
 
 		sqlParams: {
+			sqlUseDB: false, // if true then the sqlDB and sqlDBName parameters must be provided and the database will be ready to attache and used in the query, 
+			sqlDB: "path/to/database.db", // provides ability to load a database from the filesystem that can then be used in the query
+			sqlDBName: "myDB", // the name to give to the database when loading it into memory, this is the name that will be used in the query
 			sqlQuery: "Select * from Data",
 		},
 

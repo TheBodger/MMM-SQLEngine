@@ -117,6 +117,16 @@ module.exports = NodeHelper.create({
 		  ) STRICT
 		`);
 
+		//if the config includes a database to load, then make it available for querying
+
+		if (this.configurations.configuration[moduleinstance].sqlParams.sqlUseDB) {
+
+			diskDB = this.configurations.configuration[moduleinstance].sqlParams.sqlDB;
+			queryDB = this.configurations.configuration[moduleinstance].sqlParams.sqlDBName;
+
+			this.database[moduleinstance].exec(`ATTACH DATABASE '${diskDB}' AS ${queryDB}`);
+		}
+
 	},
 
 	//will load the data into table(s) in mysql and then run the query.
@@ -125,7 +135,7 @@ module.exports = NodeHelper.create({
 
 	processNDTF(moduleinstance, payload) {
 
-		//as we are adding the data each time as we are only getting changed data, we can generally insert - however, we should determine if an update is required, possibly using
+		//as we are adding the data each time as we are only getting changed data, we can generaly insert - however, we should determine if an update is required, possibly using
 		//the timestamp of the data we receive
 
 		const insert = this.database[moduleinstance].prepare('INSERT INTO data (subject,object,timestamp,value) VALUES (?, ?, ?, ?)');
@@ -143,6 +153,10 @@ module.exports = NodeHelper.create({
 			insert.run(item.subject, item.object, item.timestamp, item.value);
 		});
 
+		const countRows = this.database[moduleinstance].prepare('select count(*) as count from data').get().count; 
+
+		console.log("Data inserted into database for module instance " + moduleinstance + ", rows inserted:" + payload.Payload.NDTF.length + " , current data total:" + countRows);
+
 	},
 
 	getQueryResult(moduleinstance) {
@@ -155,7 +169,7 @@ module.exports = NodeHelper.create({
 		var res = query.all();
 
 		if (res.length == 0) {
-			console.log("Query result for module instance " + moduleinstance + "NO DATA RETURNED FROM QUERY");
+			console.log("Query result for module instance " + moduleinstance + ", NO DATA RETURNED FROM QUERY");
 		}
 		else {
 			console.log("Query result for module instance " + moduleinstance + ", rows returned:" + res.length);
@@ -179,7 +193,7 @@ module.exports = NodeHelper.create({
 			this.payloads[moduleinstance].PayloadType = payload.PayloadType;
 		}
 
-		//this is exampel that merges RSS
+		//this is example that merges RSS
 
 		if (payload.PayloadType == "RSS") {
 			this.mergeRSSItems(moduleinstance, payload);
@@ -216,7 +230,7 @@ module.exports = NodeHelper.create({
 		}
 
 		//want to send the data out as a RSS format Payload.
-		//overwrites the NDTF payload from above with RSS items only for NDTF items not alrady sent
+		//overwrites the NDTF payload from above with RSS items only for NDTF items not already sent
 
 		if (this.configurations.configuration[moduleinstance].outputType == "RSS" && payload.PayloadType == "NDTF") {
 			//add RSS payload
@@ -251,9 +265,16 @@ module.exports = NodeHelper.create({
 		}
 		else //set the keys for the basic NDTF output
 		{
-			this.payloadTracker.getItems(moduleinstance).forEach(function (item) {
-				this.payloadTracker.sentItem(moduleinstance, item);
-			})
+
+			//self.payloadTracker.getItems(moduleinstance).forEach(function (item) {
+			//	self.payloadTracker.sentItem(moduleinstance, item);
+			//})
+
+			Object.entries(this.payloadTracker.getItems(moduleinstance)).forEach(function ([key, value]) {
+				// key is the item id e.g. "7733779"
+				// value is the sent flag e.g. false
+				self.payloadTracker.sentItem(moduleinstance, key);
+			});
 
 		}
 
