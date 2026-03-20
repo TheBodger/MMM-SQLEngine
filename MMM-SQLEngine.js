@@ -54,6 +54,8 @@ Module.register("MMM-SQLEngine", {
 	 */
 	socketNotificationReceived: function (notification, payload) {
 
+		console.log(this.name + " received a socket notification: " + notification + " with payload:" + JSON.stringify(payload, null, 2));
+
 		if (notification === "NEW_DATA") {
 			if (this.identifier == payload.TargetInstanceID) { //only process updates that are for this module instance
 

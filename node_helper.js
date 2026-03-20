@@ -36,6 +36,9 @@ module.exports = NodeHelper.create({
 
 	stop: function () {
 		console.log("Shutting down node_helper");
+		Object.keys(this.database).forEach(key => {
+			try { this.database[key].close(); } catch (e) { }
+		});
 		this.connection.close();
 	},
 
@@ -175,7 +178,7 @@ module.exports = NodeHelper.create({
 			console.log("Query result for module instance " + moduleinstance + ", rows returned:" + res.length);
 		}
 
-		return query.all();
+		return res;
 	},
 
 	process: function (moduleinstance,payload) {
@@ -188,6 +191,8 @@ module.exports = NodeHelper.create({
 		//main module handles all the formatting
 
 		var self = this;
+
+		console.log("Processing payload for module instance " + moduleinstance + ", payload type:" + payload.PayloadType);
 
 		if (!this.payloads[moduleinstance].PayloadType) {
 			this.payloads[moduleinstance].PayloadType = payload.PayloadType;
@@ -236,9 +241,7 @@ module.exports = NodeHelper.create({
 			//add RSS payload
 
 			var NDTFpayload = self.payloads[moduleinstance].Payload.clone();
-
 			self.payloads[moduleinstance].Payload = new Structures.RSSPayload();
-
 			self.payloads[moduleinstance].Payload.timestamp = NDTFpayload.timestamp;
 			self.payloads[moduleinstance].Payload.RSSFeedSource = new Structures.RSSSource();
 			self.payloads[moduleinstance].Payload.RSSFeedSource.title = NDTFpayload.JSONsource;
