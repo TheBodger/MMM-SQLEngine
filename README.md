@@ -1,22 +1,15 @@
 # MMM-SQLEngine
-Accepts JSON formatted feeds from other modules and based on paramaters can store/read other SQLLite file based DBs and apply sql rules to create an output feed in json
+Accepts JSON formatted feeds from other modules and based on paramaters can store/read other SQLLite file based DBs and apply sql rules to create an output feed in either NDTF or RSS formats
 
-This magic mirror module is an MMM-xxxProvider module that is part of the MMM-Chartxxx and MMM-Feedxxx interrelated modules.
-
-For an overview of these modules see the README.md in https://github.com/TheBodger/MMM-ChartDisplay.
-
-MMM-SQLEngine module accepts JSON (NDTF Simple) formatted data, from another Module or local text file and stores it into SQL Lite DB files.
-These can then be used as input to a SQL query, the output is presented as a feed, either simple NDTF json or My RSS feed format.
-This data can be consumed by any other compatible modules (display or further providers.
+MMM-SQLEngine module accepts JSON (NDTF Simple) formatted data, from another Module or local text file and stores it temporarily into SQL Lite DB tables in memory. 
+These can then be used as input to a SQL query, the output is formatted as a feed, either simple NDTF json or My RSS feed format which is thens ent to another consumer module.
 
 ### Warning
 
-SQLite support in NODEjs is experimental and made available from version 22.5.0. so magic mirror needs to be started with the --experimental-sqlite flag. 
+SQLite support in NODEjs is experimental and made available from version 22.5.0. so magic mirror needs to be started with the --experimental-sqlite flag. Details to be added. 
 
 ### Example
-![Example of MMM-ChartProvider-JSON output being displayed](images/screenshot.png?raw=true "Example screenshot")
-
-
+![Example of MMM-SQLEngine output being displayed](images/screenshot.png?raw=true "Example screenshot")
 
 ### Dependencies
 
