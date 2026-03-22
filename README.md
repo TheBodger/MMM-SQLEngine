@@ -112,8 +112,7 @@ Note: options prefixed with # are not yet available.
 |  `#usememory`        | *Optional* - if the SQL should be run in memory or on the file based DB<br><br> **Possible values:** True,False <br> **Default value:** True
 |  `sqlUseDB`        | *Optional* - if true, then an external sqlite DB can be included for usage in the SQL<br><br> **Possible values:** true,false <br> **Default value:** false
 |  `sqlUseDB`        | *Required if sqlUseDB is true* - the filepath and name of the external sqllite database<br><br> **Possible values:** absolute or relative file name and path<br> **Default value:** none
-|  `sqlDBName`        | *Required if sqlUseDB is true* - the name used to define the database within the module to be used in the SQL query when referencing tables from the external database<br><br> **Possible values:** valid SQL name<br> **Default value:** none
-					
+|  `sqlDBName`        | *Required if sqlUseDB is true* - the name used to define the database within the module to be used in the SQL query when referencing tables from the external database<br><br> **Possible values:** valid SQL name<br> **Default value:** none					
 | `#dataoutput_NDTF `        | *Optional* - if the NDTF format feed should be published<br><br> **Possible values:** True,False <br> **Default value:** True
 | `#dataoutput_RSS `        | *Optional* - if the RSS format feed should be published<br><br> **Possible values:** True,False <br> **Default value:** False
 | `#file`            |*Optional* - The filename, with path, where the output NDTF feed will be written regardless if the feed is published<br><br> **Possible values:** Any valid filename and path string <br> **Default value:** none
