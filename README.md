@@ -5,7 +5,9 @@ This magic mirror module is an MMM-xxxProvider module that is part of the MMM-Ch
 
 For an overview of these modules see the README.md in https://github.com/TheBodger/MMM-ChartDisplay.
 
-MMM-SQLEngine module accepts JSON (NDTF Simple) formatted data, from another Module or local text file and stores it into SQL Lite DB files. These can then be used as input to a SQL query, the output is presented as a feed, either simple NDTF json or My RSS feed format. This data can be consumed by any other compatible modules (display or further providers.
+MMM-SQLEngine module accepts JSON (NDTF Simple) formatted data, from another Module or local text file and stores it into SQL Lite DB files.
+These can then be used as input to a SQL query, the output is presented as a feed, either simple NDTF json or My RSS feed format.
+This data can be consumed by any other compatible modules (display or further providers.
 
 ### Warning
 
@@ -34,15 +36,28 @@ To install the module, use your terminal to:
 
 ### Input feeds
 
-The input feed(s) for this module must be provided in json and follow the definition of the NDTF format (simply a json array of data, with each set containing a subject, object, value and timestamp). Details can be found [here](https://github.com/TheBodger/MMM-ChartUtilities#ndtf---neils-or-normalised-data-transfer-format). The feed can contain one or more sets of data. 
-File format feeds are best for data that changes very rarely, such as historical reference data. It is alse good for debugging other modules, ensuring that the input data is always fixed. File feed are read in when the module first runs and is **not refreshed**. 
-An input feed from another module running in the current instance of MM will be processed whenever it is published and the listening SQLEngine recognises that the data is ment for this instance. 
-Once the data has been read, it will be stored in a file based SQLite DB based on the configuration paramater DBAction. If the DB doesnt exist, or the DBs have been cleared at the start of the run, or the DBaction is **create**, the DB will be (re)created and the feed data inserted.
-if the DB exists and the DBaction is update, then the value is updated based on matching the 3 fields subject,object and timestamp. Any sets of data not already in the DB will be added. __Note__ Data will never be deleted from a table.
+The input feed(s) for this module must be provided in json and follow the definition of the NDTF format
+(simply a json array of data, with each set containing a subject, object, value and timestamp).
+Details can be found [here](https://github.com/TheBodger/MMM-ChartUtilities#ndtf---neils-or-normalised-data-transfer-format).
+The feed can contain one or more sets of data. 
+File format feeds are best for data that changes very rarely, such as historical reference data.
+It is alse good for debugging other modules, ensuring that the input data is always fixed. File feed are read in when the module first runs and is **not refreshed**. 
+An input feed from another module running in the current instance of MM will be processed whenever it is published
+and the listening SQLEngine recognises that the data is ment for this instance. 
+Once the data has been read, it will be stored in a temporary memory based SQLite DB
+
+Future capability:
+SQL is stored and processed based on the configuration paramater DBAction.
+If the DB doesnt exist, or the DBs have been cleared at the start of the run, or the DBaction is **create**, the DB will be (re)created and the feed data inserted.
+if the DB exists and the DBaction is update, then the value is updated based on matching the 3 fields subject,object and timestamp. Any sets of data not already in the DB will be added.
+__Note__ Data will never be deleted from a table.
 
 ### Output feed(s)
 
-Once the feeds have been processed, the SQL is run and the output, which must only be 4 columns in the order of subject, object, timestamp and value, (if no new names are provided in the SQL) will be published based on the dataoutput_ paramaters. There can be 0,1 or2 feed outputs. The JSON format feed is compatible with other modules that expect the input in the NDTF simple format. The RSS feed format is defined in the Feed utilities and is a subset of the ATOM standards 1 and 2. This can be used by modules that expect the published feed in this format. 
+Once the feeds have been processed, the SQL is run and the output, which must only be 4 columns in the order of subject, object, timestamp and value,
+(if no new names are provided in the SQL) will be published based on the dataoutput_ paramaters. There can be 0,1 or2 feed outputs.
+The JSON format feed is compatible with other modules that expect the input in the NDTF simple format.
+The RSS feed format is defined in the Feed utilities and is a subset of the ATOM standards 1 and 2 and can be used by modules that expect the published feed in this format.
 
 #### RSS output feed
 
@@ -95,7 +110,7 @@ config:
 |  `object`            |*Optional* - The key name of the object field.<br><br> **Possible values:** A name that matches the incoming JSON feed object key. <br> **Default value:** object
 |  `value`            |*Optional* - The key name of the value field.<br><br> **Possible values:** A name that matches the incoming JSON feed value key. <br> **Default value:** value
 |  `timestamp`            |*Optional* - The key name of the Timestamp field.<br><br> **Possible values:** A name that matches the incoming JSON feed timestamp key <br> **Default value:** timestamp
-|  `DBaction`            |*Optional* - Action to take with the data from feed and the DB it will be stored in.<br><br> **Possible values:** create or update<br> **Default value:** create
+|  `DBaction`            |*Optional* - FUTURE Action to take with the data from feed and the DB it will be stored in.<br><br> **Possible values:** create or update<br> **Default value:** create
 | `End data feed format`|
 | `SQL settings`|
 |  `sql: `        | *Required* - the SQL query to run after all feeds have been processed that must produce an output dataset in the order of subject,object,value and timestamp, but using any name for each field.<br><br> **Possible values:** Any valid SQL combining multiple DB tables that have been loaded as part of this instance <br> **Default value:** None
@@ -137,6 +152,8 @@ this configuration produces a single NDTF feeds from an input feed from a module
 }
 
 ```
+
+Also check the MMM-Provider-JSON2 module for an example config that extracts UK Petrol station prices, addresses and locations that are then processed in the SQL engine to produce a RSS feed for display.
 
 ### Additional Notes
 

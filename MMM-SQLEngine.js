@@ -125,7 +125,7 @@ Module.register("MMM-SQLEngine", {
 				Log.log("Got some new data @ ");
 
 				payload.moduleinstance = this.identifier; //add the module instance id to the payload
-
+				console.log("Payload size: " + JSON.stringify(payload).length + " bytes");
 				this.sendNotificationToNodeHelper("PROCESS", payload); //send the data to the node helper
 
 			}
