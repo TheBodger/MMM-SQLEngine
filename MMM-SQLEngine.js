@@ -6,8 +6,13 @@ Module.register("MMM-SQLEngine", {
 		payloadType: "RSS", //options RSS or NDTF
 		showDOM: false, // show the data created in the on the MM display, location must be added into the module config if true otherwise MM will error out
 
+		// If true, persist the in-memory sqlite table to disk after each save.
+		saveToDisk: false,
+		// Path to the on-disk sqlite database file that will receive the persisted `data` table.
+		diskDBPath: "",
+
 		sqlParams: {
-			sqlUseDB: false, // if true then the sqlDB and sqlDBName parameters must be provided and the database will be ready to attache and used in the query, 
+			sqlUseDB: false, // if true then the sqlDB and sqlDBName parameters must be provided and the database will be ready to attache and used in the query,
 			sqlDB: "path/to/database.db", // provides ability to load a database from the filesystem that can then be used in the query
 			sqlDBName: "myDB", // the name to give to the database when loading it into memory, this is the name that will be used in the query
 			sqlQuery: "Select * from Data",
@@ -27,8 +32,8 @@ Module.register("MMM-SQLEngine", {
 
 	getScripts: function () {
 		return [
-			this.file('../MMM-Structures/MMM-Structures.js'), // this file will be loaded straight from the module folder.
-		]
+			this.file("../MMM-Structures/MMM-Structures.js"), // this file will be loaded straight from the module folder.
+		];
 	},
 
 	/**
@@ -42,7 +47,7 @@ Module.register("MMM-SQLEngine", {
 	//wait for all modules to be loaded before announcing we are ready
 
 	announceReady: function (consumerID) {
-		this.sendNotification('CONSUMER', consumerID);
+		this.sendNotification("CONSUMER", consumerID);
 	},
 
 	/**
@@ -71,7 +76,7 @@ Module.register("MMM-SQLEngine", {
 				modulePayload.PayloadType = payload.PayloadType; //options RSS or NDTF
 				modulePayload.Payload = payload.Payload; // the payload itself, which is a JSON object
 
-				this.sendNotification('PROVIDER_UPDATE', modulePayload);
+				this.sendNotification("PROVIDER_UPDATE", modulePayload);
 				Log.log("Sent some new data @ ");
 			}
 		}
@@ -81,10 +86,10 @@ Module.register("MMM-SQLEngine", {
 	 * Render the page we're on.
 	 */
 	getDom() {
-		const wrapper = document.createElement("div")
-		wrapper.innerHTML = `<b>${this.identifier}</b><br/><p>${this.templateContent}</p>`
+		const wrapper = document.createElement("div");
+		wrapper.innerHTML = `<b>${this.identifier}</b><br/><p>${this.templateContent}</p>`;
 
-		return wrapper
+		return wrapper;
 	},
 
 	sendNotificationToNodeHelper: function (notification, payload) {
@@ -100,24 +105,23 @@ Module.register("MMM-SQLEngine", {
 	notificationReceived(notification, payload, sender) {
 
 		if (sender) {
-			Log.log(this.name + " received a module notification: " + notification + " from sender: " + sender.name);
+			Log.log(this.identifier + " received a module notification: " + notification + " from sender: " + sender.name);
 		} else {
-			Log.log(this.name + " received a system notification: " + notification);
+			Log.log(this.identifier + " received a system notification: " + notification);
 		}
 
 		//if we get a notification that there is a consumer out there, if it one of our consumers, start processing
 		//and mimic a response - we also want to start our cycles here - may have to handle some case of multipel restarts to a cycle
 		//when we get multiple consumers to look after
 
+		if (notification == "DOM_OBJECTS_CREATED") { //wait until now to ensure all providers started and ready
 
-		if (notification == 'DOM_OBJECTS_CREATED') { //wait until now to ensure all providers started and ready
-
-			var self = this
+			var self = this;
 
 			this.announceReady(this.config.id);
 		}
 
-		if (notification == 'PROVIDER_UPDATE') {
+		if (notification == "PROVIDER_UPDATE") {
 			//some one said they have data, it might be for me !
 
 			if (payload.TargetID == this.config.id) {
@@ -131,5 +135,5 @@ Module.register("MMM-SQLEngine", {
 			}
 		}
 	}
-})
+});
 
